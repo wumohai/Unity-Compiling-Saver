@@ -29,12 +29,26 @@ public class CompilingSaver
 		foreach(string guid in AssetDatabase.FindAssets("t:MonoScript", selectFolders.ToArray()))
 		{
 			string scriptPath = AssetDatabase.GUIDToAssetPath(guid);
-			string newPath = scriptPath.Insert("Assets/".Length, "Standard Assets/");
+
+			string newPath = "";
+			if(isUnderEditor(scriptPath))
+				newPath = scriptPath.Insert("Assets/".Length, "Standard Assets/Editor/");
+			else
+				newPath = scriptPath.Insert("Assets/".Length, "Standard Assets/Runtime/");
 
 			Debug.Log("Move " + scriptPath + " to " + newPath);
 			createDirectoriesForPath(newPath);
 			AssetDatabase.MoveAsset(scriptPath, newPath);
 		}
+	}
+
+	static bool isUnderEditor(string path)
+	{
+		foreach(string dir in path.Split('/'))
+			if(dir == "Editor")
+				return true;
+
+		return false;
 	}
 
 	static void createDirectoriesForPath(string path)
