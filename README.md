@@ -9,8 +9,8 @@ If your library code depends on the code file position in your project(That bare
 #### How to use
 
 1. Copy the CompilingSaver folder into your project. 
-2. Select the folders you want to optimize.
-3. Click menu item Assets-Optimize Compiling Time.
+2. Select the folders you want to optimize in your project hierarchy.
+3. Click menu item **Assets->Optimize Compiling Time**.
 
 
 
