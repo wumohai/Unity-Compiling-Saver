@@ -14,7 +14,11 @@ public class CompilingSaver
 
 		List<string> selectFolders = new List<string>();
 		foreach (UnityEngine.Object obj in Selection.GetFiltered(typeof(UnityEngine.Object), SelectionMode.Assets))
-			selectFolders.Add(AssetDatabase.GetAssetPath(obj));
+		{
+			string selectPath = AssetDatabase.GetAssetPath(obj);
+			if(Directory.Exists(selectPath))
+				selectFolders.Add(selectPath);
+		}
 
 		if(selectFolders.Count == 0)
 		{
@@ -22,20 +26,14 @@ public class CompilingSaver
 			return;
 		}	
 
-		foreach(string selectPath in selectFolders)
+		foreach(string guid in AssetDatabase.FindAssets("t:MonoScript", selectFolders.ToArray()))
 		{
-			if (!Directory.Exists(selectPath)) 
-				continue;
+			string scriptPath = AssetDatabase.GUIDToAssetPath(guid);
+			string newPath = scriptPath.Insert("Assets/".Length, "Standard Assets/");
 
-			foreach(string guid in AssetDatabase.FindAssets("t:MonoScript", new string[]{selectPath}))
-			{
-				string scriptPath = AssetDatabase.GUIDToAssetPath(guid);
-				string newPath = scriptPath.Insert("Assets/".Length, "Standard Assets/");
-
-				Debug.Log("Move " + scriptPath + " to " + newPath);
-				createDirectoriesForPath(newPath);
-				AssetDatabase.MoveAsset(scriptPath, newPath);
-			}
+			Debug.Log("Move " + scriptPath + " to " + newPath);
+			createDirectoriesForPath(newPath);
+			AssetDatabase.MoveAsset(scriptPath, newPath);
 		}
 	}
 
